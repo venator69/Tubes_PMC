@@ -5,7 +5,7 @@ Tempat nyatuin kode tubes
 ## Cara kontribusi:
 ### 1. Clone Repo:
 ```
-git clone .git
+git clone https://github.com/Ario-sut/Tubes_PMC.git
 ```
 
 ### 2. Buat branch baru
