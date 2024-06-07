@@ -7,8 +7,25 @@
 #define MAX_LINE 500
 
 // Definisikan struktur Pasien untuk data pasien
+typedef struct Riwayat
+{
+    char tanggal[MAX];
+    char id_pasien[MAX];
+    char diagnosis[MAX];
+    char tindakan[MAX];
+    char kontrol[MAX];
+    int biaya;
+}Riwayat;
+
+typedef struct Biaya
+{
+    char aktivitas[MAX];
+    int biaya;
+}Biaya;
+
+
+
 typedef struct Pasien {
-    int no;
     char nama_lengkap[MAX];
     char alamat[MAX];
     char kota[MAX];
@@ -21,9 +38,8 @@ typedef struct Pasien {
 } Pasien;
 
 // Fungsi untuk membuat node baru untuk pasien
-Pasien* createPasien(int no, char* nama_lengkap, char* alamat, char* kota, char* tempat_lahir, char* tanggal_lahir, int umur, char* no_bpjs, char* id_pasien) {
+Pasien* createPasien(char* nama_lengkap, char* alamat, char* kota, char* tempat_lahir, char* tanggal_lahir, int umur, char* no_bpjs, char* id_pasien) {
     Pasien* newPasien = (Pasien*)malloc(sizeof(Pasien));
-    newPasien->no = no;
     strcpy(newPasien->nama_lengkap, nama_lengkap);
     strcpy(newPasien->alamat, alamat);
     strcpy(newPasien->kota, kota);
@@ -101,7 +117,7 @@ void bacaDataPasien(FILE* file, Pasien** head) {
         token = strtok(NULL, "\",\"\n");
         strcpy(id_pasien, token);
 
-        Pasien* newPasien = createPasien(no, nama_lengkap, alamat, kota, tempat_lahir, tanggal_lahir, umur, no_bpjs, id_pasien);
+        Pasien* newPasien = createPasien(nama_lengkap, alamat, kota, tempat_lahir, tanggal_lahir, umur, no_bpjs, id_pasien);
         insertPasien(head, newPasien);
     }
 }
