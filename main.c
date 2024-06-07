@@ -1,4 +1,9 @@
 #include "header.c"
+#include "functions/Adam.c"
+#include "functions/Hubert.c"
+#include "functions/Fitraka.c"
+#include "functions/Raditya.c"
+#include "functions/Requint.c"
 
 int main() {
     int ch;
