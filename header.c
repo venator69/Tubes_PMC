@@ -6,7 +6,7 @@
 #define MAX 100
 #define MAX_LINE 500
 
-// Definisikan struktur Pasien untuk data pasien
+// Definisikan struktur Riwayat untuk data riwayat
 typedef struct Riwayat
 {
     char tanggal[MAX];
@@ -17,14 +17,14 @@ typedef struct Riwayat
     int biaya;
 }Riwayat;
 
+// Definisikan struktur Biaya untuk data biaya
 typedef struct Biaya
 {
     char aktivitas[MAX];
     int biaya;
 }Biaya;
 
-
-
+// Definisikan struktur Pasien untuk data pasien
 typedef struct Pasien {
     char nama_lengkap[MAX];
     char alamat[MAX];
