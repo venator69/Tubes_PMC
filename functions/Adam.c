@@ -252,3 +252,262 @@ void searchDataPasien(Pasien* head, const char* idPasien) {
         printf("\n");
     }
 }
+
+typedef struct riwayatwithtanggal
+{
+    char tanggal[MAX];
+    char tanggalnum[MAX];
+    char bulan[MAX];
+    char tahun[MAX];
+    char id_pasien[MAX];
+    char diagnosis[MAX];
+    char tindakan[MAX];
+    char kontrol[MAX];
+    int biaya;
+}riwayatwithtanggal;
+
+void getriwayatwithtanggal(riwayatwithtanggal* riwayatWithTanggalArray, Riwayat* riwayatArray, int count) {
+    for (int i = 0; i < count; i++) {
+        strcpy(riwayatWithTanggalArray[i].tanggal, riwayatArray[i].tanggal);
+
+        char* token = strtok(riwayatWithTanggalArray[i].tanggal, " ");
+        strcpy(riwayatWithTanggalArray[i].tanggalnum, token);
+
+        token = strtok(NULL, " ");
+        strcpy(riwayatWithTanggalArray[i].bulan, token);
+
+        token = strtok(NULL, " ");
+        strcpy(riwayatWithTanggalArray[i].tahun, token);
+
+        strcpy(riwayatWithTanggalArray[i].id_pasien, riwayatArray[i].id_pasien);
+        strcpy(riwayatWithTanggalArray[i].diagnosis, riwayatArray[i].diagnosis);
+        strcpy(riwayatWithTanggalArray[i].tindakan, riwayatArray[i].tindakan);
+        strcpy(riwayatWithTanggalArray[i].kontrol, riwayatArray[i].kontrol);
+        riwayatWithTanggalArray[i].biaya = riwayatArray[i].biaya;
+    }
+}
+
+void add2000ToTahun(riwayatwithtanggal* riwayatWithTanggalArray, int count) {
+    for (int i = 0; i < count; i++) {
+        int tahun = atoi(riwayatWithTanggalArray[i].tahun);
+        if (tahun < 2000){
+            tahun += 2000;
+        }
+        sprintf(riwayatWithTanggalArray[i].tahun, "%d", tahun);
+    }
+}
+
+typedef struct penghasilan{
+    int bulan;
+    int tahun;
+    int biaya;
+}penghasilan;
+
+void convertformat(riwayatwithtanggal* riwayatWithTanggalArray, int count, penghasilan* penghasilanArray) {
+    for (int i = 0; i < count; i++) {
+        penghasilanArray[i].bulan = MonthToNumber(riwayatWithTanggalArray[i].bulan);
+        penghasilanArray[i].tahun = atoi(riwayatWithTanggalArray[i].tahun);
+        penghasilanArray[i].biaya = riwayatWithTanggalArray[i].biaya;
+    }
+}
+
+void mergePenghasilan(penghasilan* penghasilanArray, int count, penghasilan* mergedArray, int* mergedCount) {
+    *mergedCount = 0;
+    for (int i = 0; i < count; i++) {
+        int found = 0;
+        for (int j = 0; j < *mergedCount; j++) {
+            if (penghasilanArray[i].bulan == mergedArray[j].bulan && penghasilanArray[i].tahun == mergedArray[j].tahun) {
+                mergedArray[j].biaya += penghasilanArray[i].biaya;
+                found = 1;
+                break;
+            }
+        }
+        if (!found) {
+            mergedArray[*mergedCount] = penghasilanArray[i];
+            (*mergedCount)++;
+        }
+    }
+}
+
+// fungsi untuk sorting array penghasilan berdasarkan bulan dan tahun
+void sortPenghasilan(penghasilan* mergedArray, int mergedCount) {
+    for (int i = 0; i < mergedCount; i++) {
+        for (int j = i + 1; j < mergedCount; j++) {
+            if (mergedArray[i].tahun > mergedArray[j].tahun) {
+                penghasilan temp = mergedArray[i];
+                mergedArray[i] = mergedArray[j];
+                mergedArray[j] = temp;
+            } else if (mergedArray[i].tahun == mergedArray[j].tahun) {
+                if (mergedArray[i].bulan > mergedArray[j].bulan) {
+                    penghasilan temp = mergedArray[i];
+                    mergedArray[i] = mergedArray[j];
+                    mergedArray[j] = temp;
+                }
+            }
+        }
+    }
+}
+
+typedef struct penghasilantahun{
+    int tahun;
+    int biaya;
+}penghasilantahun;
+
+void fillPenghasilanTahunArray(penghasilan* mergedArray, int mergedCount, penghasilantahun* penghasilanTahunArray, int* mergedTahunCount) {
+    *mergedTahunCount = 0;
+    for (int i = 0; i < mergedCount; i++) {
+        int found = 0;
+        for (int j = 0; j < *mergedTahunCount; j++) {
+            if (mergedArray[i].tahun == penghasilanTahunArray[j].tahun) {
+                penghasilanTahunArray[j].biaya += mergedArray[i].biaya;
+                found = 1;
+            }
+        }
+        if (!found) {
+            penghasilanTahunArray[*mergedTahunCount].tahun = mergedArray[i].tahun;
+            penghasilanTahunArray[*mergedTahunCount].biaya = mergedArray[i].biaya;
+            (*mergedTahunCount)++;
+        }
+    }
+}
+
+// print penghasilan per tahun
+void printTotalBiayaPerTahun(penghasilantahun* penghasilanTahunArray, int mergedTahunCount) {
+    printf("Penghasilan klinik per tahun: \n");
+    printf("\n");
+    for (int i = 0; i < mergedTahunCount; i++) {
+        printf("Penghasilan klinik tahun %d adalah %d\n", penghasilanTahunArray[i].tahun, penghasilanTahunArray[i].biaya);
+    }
+}
+
+float findAverageBiayaPerTahun(penghasilantahun* penghasilanTahunArray, int mergedTahunCount) {
+    int totalBiaya = 0;
+    for (int i = 0; i < mergedTahunCount; i++) {
+        totalBiaya += penghasilanTahunArray[i].biaya;
+    }
+    float averageBiaya = (float)totalBiaya / mergedTahunCount;
+    return averageBiaya;
+}
+
+// Fungsi untuk mencetak total biaya per bulan dan tahun dari array penghasilan
+void printTotalBiayaPerBulanTahun(penghasilan* mergedArray, int mergedCount) {
+    printf("Penghasilan klinik per bulan: \n");
+    printf("\n");
+    for (int i = 0; i < mergedCount; i++) {
+        if (mergedArray[i].bulan == 1){
+            printf("Penghasilan klinik bulan Januari %d adalah %d\n", mergedArray[i].tahun, mergedArray[i].biaya); 
+        }
+        else if (mergedArray[i].bulan == 2){
+            printf("Penghasilan klinik bulan Februari %d adalah %d\n", mergedArray[i].tahun, mergedArray[i].biaya); 
+        }
+        else if (mergedArray[i].bulan == 3){
+            printf("Penghasilan klinik bulan Maret %d adalah %d\n", mergedArray[i].tahun, mergedArray[i].biaya); 
+        }
+        else if (mergedArray[i].bulan == 4){
+            printf("Penghasilan klinik bulan April %d adalah %d\n", mergedArray[i].tahun, mergedArray[i].biaya); 
+        }
+        else if (mergedArray[i].bulan == 5){
+            printf("Penghasilan klinik bulan Mei %d adalah %d\n", mergedArray[i].tahun, mergedArray[i].biaya); 
+        }
+        else if (mergedArray[i].bulan == 6){
+            printf("Penghasilan klinik bulan Juni %d adalah %d\n", mergedArray[i].tahun, mergedArray[i].biaya); 
+        }
+        else if (mergedArray[i].bulan == 7){
+            printf("Penghasilan klinik bulan Juli %d adalah %d\n", mergedArray[i].tahun, mergedArray[i].biaya); 
+        }
+        else if (mergedArray[i].bulan == 8){
+            printf("Penghasilan klinik bulan Agustus %d adalah %d\n", mergedArray[i].tahun, mergedArray[i].biaya); 
+        }
+        else if (mergedArray[i].bulan == 9){
+            printf("Penghasilan klinik bulan September %d adalah %d\n", mergedArray[i].tahun, mergedArray[i].biaya); 
+        }
+        else if (mergedArray[i].bulan == 10){
+            printf("Penghasilan klinik bulan Oktober %d adalah %d\n", mergedArray[i].tahun, mergedArray[i].biaya); 
+        }
+        else if (mergedArray[i].bulan == 11){
+            printf("Penghasilan klinik bulan November %d adalah %d\n", mergedArray[i].tahun, mergedArray[i].biaya); 
+        }
+        else if (mergedArray[i].bulan == 12){
+            printf("Penghasilan klinik bulan Desember %d adalah %d\n", mergedArray[i].tahun, mergedArray[i].biaya); 
+        }
+
+    }
+}
+
+
+
+int MonthToNumber (char a []){
+
+    if (strcmp(a, "Januari")==0||strcmp(a, "Jan")==0) return 1;
+    else if (strcmp(a, "Februari")==0||strcmp(a, "Feb")==0) return 2;
+    else if (strcmp(a, "Maret")==0||strcmp(a, "Mar")==0) return 3;
+    else if (strcmp(a, "April")==0||strcmp(a, "Apr")==0) return 4;
+    else if (strcmp(a, "Mei")==0) return 5;
+    else if (strcmp(a, "Juni")==0||strcmp(a, "Jun")==0) return 6;
+    else if (strcmp(a, "Juli")==0||strcmp(a, "Jul")==0) return 7;
+    else if (strcmp(a, "Agustus")==0||strcmp(a, "Agu")==0) return 8;
+    else if (strcmp(a, "September")==0||strcmp(a, "Sep")==0) return 9;
+    else if (strcmp(a, "Oktober")==0||strcmp(a, "Okt")==0) return 10;
+    else if (strcmp(a, "November")==0||strcmp(a, "Nov")==0) return 11;
+    else if (strcmp(a, "Desember")==0||strcmp(a, "Des")==0) return 12;
+    else return -1; // Error case
+}
+
+
+
+
+/*
+int main() {
+    Riwayat riwayatArray[MAX];
+    int count;
+    char idpasiensearch[MAX];
+
+    int ch;
+    FILE* file = fopen("DataPMC20232024.csv", "r");
+    if (file == NULL) {
+        printf("Error opening file!\n");
+        return 1;
+    }
+
+    Pasien* head = NULL;
+    bacaDataPasien(file, &head);
+    fclose(file);
+
+    readCSV("riwayatpasien.csv", riwayatArray, &count);
+    replaceHyphenWithSpace(riwayatArray, count);
+    // printPasienList(head);
+
+    // printRiwayatArray(riwayatArray, count);
+
+    //get idpasiensearch from user using fgets
+
+    printf("Masukkan ID Pasien yang ingin dicari: ");
+    scanf("%[^\n]%*c", idpasiensearch);
+    printf("\n");
+
+    searchDataPasien(head, idpasiensearch);
+    searchRiwayat(riwayatArray, count, idpasiensearch);
+    
+
+    // primnting sum by bulan tahun
+    riwayatwithtanggal riwayatWithTanggalArray[MAX];
+    penghasilan penghasilanArray[MAX];
+    penghasilan mergedArray[MAX];
+    penghasilantahun penghasilanTahunArray[MAX];
+    penghasilantahun mergedTahunArray[MAX];
+    int mergedCount, mergedTahunCount;
+    getriwayatwithtanggal(riwayatWithTanggalArray, riwayatArray, count);
+    add2000ToTahun(riwayatWithTanggalArray, count);
+    convertformat(riwayatWithTanggalArray, count, penghasilanArray);
+    mergePenghasilan(penghasilanArray, count, mergedArray, &mergedCount);
+    sortPenghasilan(mergedArray, mergedCount);
+    printTotalBiayaPerBulanTahun(mergedArray, mergedCount);
+    fillPenghasilanTahunArray(mergedArray, mergedCount, penghasilanTahunArray, &mergedTahunCount);
+    printTotalBiayaPerTahun(penghasilanTahunArray, mergedTahunCount);
+    int avgyear = findAverageBiayaPerTahun(penghasilanTahunArray, mergedTahunCount);
+    printf("\n");
+    printf("Rata-rata pendapatan per tahun adalah %d\n", avgyear);
+
+    return 0;
+}
+*/
