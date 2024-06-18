@@ -1,12 +1,12 @@
 #include "header.c"
 
-void tambahRiwayatPasien(RiwayatPasienNode** head) {
-    RiwayatPasienNode* newNode = (RiwayatPasienNode*)malloc(sizeof(RiwayatPasienNode));
+void tambahRiwayatPasien(Riwayat** head) {
+    Riwayat* newNode = (Riwayat*)malloc(sizeof(Riwayat));
     printf("Masukkan nomor riwayat: ");
     scanf("%d", &newNode->no);
     getchar(); // Consumes the newline character left in the input buffer by scanf
 
-    printf("Masukkan tanggal: ");
+    printf("Masukkan tanggal (format DD MMM YYYY): ");
     fgets(newNode->tanggal, sizeof(newNode->tanggal), stdin);
     newNode->tanggal[strcspn(newNode->tanggal, "\n")] = '\0'; // Remove newline character if present
 
@@ -22,7 +22,7 @@ void tambahRiwayatPasien(RiwayatPasienNode** head) {
     fgets(newNode->tindakan, sizeof(newNode->tindakan), stdin);
     newNode->tindakan[strcspn(newNode->tindakan, "\n")] = '\0'; // Remove newline character if present
 
-    printf("Masukkan tanggal kontrol: ");
+    printf("Masukkan tanggal kontrol (format DD MMM YYYY): ");
     fgets(newNode->kontrol, sizeof(newNode->kontrol), stdin);
     newNode->kontrol[strcspn(newNode->kontrol, "\n")] = '\0'; // Remove newline character if present
 
@@ -38,7 +38,7 @@ void tambahRiwayatPasien(RiwayatPasienNode** head) {
     if (*head == NULL) {
         *head = newNode;
     } else {
-        RiwayatPasienNode* current = *head;
+        Riwayat* current = *head;
         while (current->next != NULL) {
             current = current->next;
         }
@@ -47,7 +47,7 @@ void tambahRiwayatPasien(RiwayatPasienNode** head) {
 }
 
 // Fungsi untuk mencari riwayat pasien berdasarkan ID Pasien dan tanggal
-void cariRiwayatPasien(RiwayatPasienNode* head) {
+void cariRiwayatPasien(Riwayat* head) {
     char idPasien[20];
     char tanggal[50];
 
@@ -56,11 +56,11 @@ void cariRiwayatPasien(RiwayatPasienNode* head) {
     fgets(idPasien, sizeof(idPasien), stdin);
     idPasien[strcspn(idPasien, "\n")] = '\0'; // Remove newline character if present
 
-    printf("Masukkan tanggal: ");
+    printf("Masukkan tanggal (format DD MMM YYYY): ");
     fgets(tanggal, sizeof(tanggal), stdin);
     tanggal[strcspn(tanggal, "\n")] = '\0'; // Remove newline character if present
 
-    RiwayatPasienNode* current = head;
+    Riwayat* current = head;
     bool found = false;
 
     while (current != NULL) {
@@ -77,7 +77,7 @@ void cariRiwayatPasien(RiwayatPasienNode* head) {
     }
 }
 
-void hapusRiwayatPasien(RiwayatPasienNode** head) {
+void hapusRiwayatPasien(Riwayat** head) {
     char idPasien[20];
     char tanggal[50];
 
@@ -86,12 +86,12 @@ void hapusRiwayatPasien(RiwayatPasienNode** head) {
     fgets(idPasien, sizeof(idPasien), stdin);
     idPasien[strcspn(idPasien, "\n")] = '\0'; // Remove newline character if present
 
-    printf("Masukkan tanggal riwayat: ");
+    printf("Masukkan tanggal riwayat (format DD MMM YYYY): ");
     fgets(tanggal, sizeof(tanggal), stdin);
     tanggal[strcspn(tanggal, "\n")] = '\0'; // Remove newline character if present
     
-    RiwayatPasienNode* current = *head;
-    RiwayatPasienNode* prev = NULL;
+    Riwayat* current = *head;
+    Riwayat* prev = NULL;
     bool found = false;
 
     while (current != NULL) {
@@ -116,7 +116,7 @@ void hapusRiwayatPasien(RiwayatPasienNode** head) {
 }
 
 
-void ubahRiwayatPasien(RiwayatPasienNode* head) {
+void ubahRiwayatPasien(Riwayat* head) {
     char idPasien[20];
     char tanggal[20];
 
@@ -129,7 +129,7 @@ void ubahRiwayatPasien(RiwayatPasienNode* head) {
     fgets(tanggal, sizeof(tanggal), stdin);
     tanggal[strcspn(tanggal, "\n")] = '\0'; // Remove newline character if present
 
-    RiwayatPasienNode* current = head;
+    Riwayat* current = head;
     bool found = false;
 
     while (current != NULL) {
