@@ -6,7 +6,7 @@ void tambahRiwayatPasien(RiwayatPasienNode** head) {
     scanf("%d", &newNode->no);
     getchar(); // Consumes the newline character left in the input buffer by scanf
 
-    printf("Masukkan tanggal (format DD MMM YYYY): ");
+    printf("Masukkan tanggal: ");
     fgets(newNode->tanggal, sizeof(newNode->tanggal), stdin);
     newNode->tanggal[strcspn(newNode->tanggal, "\n")] = '\0'; // Remove newline character if present
 
@@ -22,7 +22,7 @@ void tambahRiwayatPasien(RiwayatPasienNode** head) {
     fgets(newNode->tindakan, sizeof(newNode->tindakan), stdin);
     newNode->tindakan[strcspn(newNode->tindakan, "\n")] = '\0'; // Remove newline character if present
 
-    printf("Masukkan tanggal kontrol (format DD MMM YYYY): ");
+    printf("Masukkan tanggal kontrol: ");
     fgets(newNode->kontrol, sizeof(newNode->kontrol), stdin);
     newNode->kontrol[strcspn(newNode->kontrol, "\n")] = '\0'; // Remove newline character if present
 
@@ -56,7 +56,7 @@ void cariRiwayatPasien(RiwayatPasienNode* head) {
     fgets(idPasien, sizeof(idPasien), stdin);
     idPasien[strcspn(idPasien, "\n")] = '\0'; // Remove newline character if present
 
-    printf("Masukkan tanggal (format DD MMM YYYY): ");
+    printf("Masukkan tanggal: ");
     fgets(tanggal, sizeof(tanggal), stdin);
     tanggal[strcspn(tanggal, "\n")] = '\0'; // Remove newline character if present
 
@@ -86,7 +86,7 @@ void hapusRiwayatPasien(RiwayatPasienNode** head) {
     fgets(idPasien, sizeof(idPasien), stdin);
     idPasien[strcspn(idPasien, "\n")] = '\0'; // Remove newline character if present
 
-    printf("Masukkan tanggal riwayat (format DD MMM YYYY): ");
+    printf("Masukkan tanggal riwayat: ");
     fgets(tanggal, sizeof(tanggal), stdin);
     tanggal[strcspn(tanggal, "\n")] = '\0'; // Remove newline character if present
     
