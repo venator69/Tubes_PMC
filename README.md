@@ -22,3 +22,13 @@ git add .
 git commit -m "message"
 ```
 Misal "message" : update
+
+## Cara menjalankan GUI:
+
+Buka Visual Studio
+```
+buka project, buka file sln
+```
+Builf project dengan memilih Build > Build Solution
+```
+Run project dengan menekan tombol run
