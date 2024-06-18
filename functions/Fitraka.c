@@ -30,9 +30,6 @@ void tambahRiwayatPasien(RiwayatPasienNode** head) {
     scanf("%d", &newNode->biaya);
     getchar(); // Consumes the newline character left in the input buffer by scanf
 
-    // convertDateFormat(newNode->tanggal);  // Convert date format
-    // convertDateFormat(newNode->kontrol);  // Convert control date format
-
     newNode->next = NULL;
 
     if (*head == NULL) {
