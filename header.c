@@ -121,3 +121,73 @@ void bacaDataPasien(FILE* file, Pasien** head) {
         insertPasien(head, newPasien);
     }
 }
+
+// Fungsi untuk membaca file biaya tindakan dan mengisi linked list
+Biaya* bacaBiayaFile(const char* filename) {
+    FILE* file = fopen(filename, "r");
+    if (!file) {
+        perror("Gagal membuka file");
+        return NULL;
+    }
+
+    char line[MAX_LINE_LENGTH];
+    Biaya* head = NULL;
+    Biaya* current = NULL;
+
+    // Lewati header
+    fgets(line, MAX_LINE_LENGTH, file);
+
+    while (fgets(line, MAX_LINE_LENGTH, file)) {
+        Biaya* newNode = (Biaya*)malloc(sizeof(Biaya));
+        sscanf(line, "%d,%49[^,],\"%d", &newNode->no, newNode->aktivitas, &newNode->biaya);
+        newNode->next = NULL;
+
+        if (head == NULL) {
+            head = newNode;
+            current = head;
+        } else {
+            current->next = newNode;
+            current = current->next;
+        }
+    }
+
+    fclose(file);
+    return head;
+}
+
+// Fungsi untuk membaca file riwayat pasien dan mengisi linked list
+Riwayat* bacaRiwayatPasienFile(const char* filename) {
+    FILE* file = fopen(filename, "r");
+    if (!file) {
+        perror("Gagal membuka file");
+        return NULL;
+    }
+
+    char line[MAX_LINE_LENGTH];
+    Riwayat* head = NULL;
+    Riwayat* current = NULL;
+
+    // Lewati header
+    fgets(line, MAX_LINE_LENGTH, file);
+
+    while (fgets(line, MAX_LINE_LENGTH, file)) {
+        Riwayat* newNode = (Riwayat*)malloc(sizeof(Riwayat));
+        sscanf(line, "%d,%49[^,],%19[^,],%49[^,],%49[^,],%49[^,],%d",
+               &newNode->no, newNode->tanggal, newNode->idPasien, newNode->diagnosis, newNode->tindakan, newNode->kontrol, &newNode->biaya);
+        
+        
+        newNode->next = NULL;
+
+        if (head == NULL) {
+            head = newNode;
+            current = head;
+        } else {
+            current->next = newNode;
+            current = current->next;
+        }
+    }
+
+    fclose(file);
+    return head;
+}
+
