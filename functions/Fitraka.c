@@ -1,3 +1,5 @@
+#include "header.c"
+
 void tambahRiwayatPasien(RiwayatPasienNode** head) {
     RiwayatPasienNode* newNode = (RiwayatPasienNode*)malloc(sizeof(RiwayatPasienNode));
     printf("Masukkan nomor riwayat: ");
@@ -27,6 +29,9 @@ void tambahRiwayatPasien(RiwayatPasienNode** head) {
     printf("Masukkan biaya: ");
     scanf("%d", &newNode->biaya);
     getchar(); // Consumes the newline character left in the input buffer by scanf
+
+    // convertDateFormat(newNode->tanggal);  // Convert date format
+    // convertDateFormat(newNode->kontrol);  // Convert control date format
 
     newNode->next = NULL;
 
@@ -74,18 +79,23 @@ void cariRiwayatPasien(RiwayatPasienNode* head) {
 
 void hapusRiwayatPasien(RiwayatPasienNode** head) {
     char idPasien[20];
+    char tanggal[50];
 
     printf("Masukkan ID Pasien untuk menghapus riwayat: ");
     fgets(idPasien, sizeof(idPasien), stdin);
     fgets(idPasien, sizeof(idPasien), stdin);
     idPasien[strcspn(idPasien, "\n")] = '\0'; // Remove newline character if present
 
+    printf("Masukkan tanggal riwayat (format DD MMM YYYY): ");
+    fgets(tanggal, sizeof(tanggal), stdin);
+    tanggal[strcspn(tanggal, "\n")] = '\0'; // Remove newline character if present
+    
     RiwayatPasienNode* current = *head;
     RiwayatPasienNode* prev = NULL;
     bool found = false;
 
     while (current != NULL) {
-        if (strcmp(current->idPasien, idPasien) == 0) {
+        if (strcmp(current->idPasien, idPasien) == 0 && strcmp(current->tanggal, tanggal) == 0) {
             found = true;
             if (prev == NULL) {
                 *head = current->next;
@@ -93,7 +103,7 @@ void hapusRiwayatPasien(RiwayatPasienNode** head) {
                 prev->next = current->next;
             }
             free(current);
-            printf("Riwayat pasien dengan ID Pasien %s berhasil dihapus.\n", idPasien);
+            printf("Riwayat pasien dengan ID Pasien %s pada tanggal %s berhasil dihapus.\n", idPasien, tanggal);
             break;
         }
         prev = current;
@@ -101,31 +111,33 @@ void hapusRiwayatPasien(RiwayatPasienNode** head) {
     }
 
     if (!found) {
-        printf("Riwayat pasien dengan ID Pasien %s tidak ditemukan.\n", idPasien);
+        printf("Riwayat pasien dengan ID Pasien %s pada tanggal %s tidak ditemukan.\n", idPasien, tanggal);
     }
 }
 
+
 void ubahRiwayatPasien(RiwayatPasienNode* head) {
     char idPasien[20];
-    int no;
+    char tanggal[20];
 
     printf("Masukkan ID Pasien yang ingin diubah: ");
     fgets(idPasien, sizeof(idPasien), stdin);
     fgets(idPasien, sizeof(idPasien), stdin);
     idPasien[strcspn(idPasien, "\n")] = '\0'; // Remove newline character if present
 
-    printf("Masukkan nomor riwayat yang ingin diubah: ");
-    scanf("%d", &no);
+    printf("Masukkan tanggal riwayat: ");
+    fgets(tanggal, sizeof(tanggal), stdin);
+    tanggal[strcspn(tanggal, "\n")] = '\0'; // Remove newline character if present
 
     RiwayatPasienNode* current = head;
     bool found = false;
 
     while (current != NULL) {
-        if (strcmp(current->idPasien, idPasien) == 0 && current->no == no) {
+        if (strcmp(current->idPasien, idPasien) == 0 && strcmp(current->tanggal, tanggal) == 0) {
             found = true;
 
             // Mengubah data riwayat pasien
-            printf("Masukkan tanggal (format DD-MMM-YY): ");
+            printf("Masukkan tanggal: ");
             fgets(current->tanggal, sizeof(current->tanggal), stdin);
             fgets(current->tanggal, sizeof(current->tanggal), stdin);
             current->tanggal[strcspn(current->tanggal, "\n")] = '\0'; // Remove newline character if present
@@ -145,14 +157,14 @@ void ubahRiwayatPasien(RiwayatPasienNode* head) {
             printf("Masukkan biaya: ");
             scanf("%d", &current->biaya);
 
-            printf("Riwayat pasien dengan ID Pasien %s dan nomor %d telah diubah.\n", idPasien, no);
+            printf("Riwayat pasien dengan ID Pasien %s dan tanggal %s telah diubah.\n", idPasien, tanggal);
             break;
         }
         current = current->next;
     }
 
     if (!found) {
-        printf("Riwayat pasien dengan ID Pasien %s dan nomor %d tidak ditemukan.\n", idPasien, no);
+        printf("Riwayat pasien dengan ID Pasien %s dan tanggal %s tidak ditemukan.\n", idPasien, tanggal);
     }
 }
 
