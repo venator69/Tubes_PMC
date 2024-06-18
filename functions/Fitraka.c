@@ -168,6 +168,26 @@ void ubahRiwayatPasien(Riwayat* head) {
     }
 }
 
+// Fungsi untuk menyimpan linked list riwayat pasien ke file
+void simpanRiwayatPasienKeFile(Riwayat* head, const char* filename) {
+    FILE* file = fopen(filename, "w");
+    if (!file) {
+        perror("Gagal membuka file");
+        return;
+    }
+
+    fprintf(file, "No,Tanggal,ID Pasien,Diagnosis,Tindakan,Kontrol,Biaya\n");
+
+    Riwayat* current = head;
+    while (current != NULL) {
+        fprintf(file, "%d,%s,%s,%s,%s,%s,%d\n",
+                current->no, current->tanggal, current->id_pasien, current->diagnosis,
+                current->tindakan, current->kontrol, current->biaya);
+        current = current->next;
+    }
+
+    fclose(file);
+}
 /*
  case 5:
     tambahRiwayatPasien(&riwayatPasienHead);
@@ -181,4 +201,7 @@ case 7:
 case 8:
     ubahRiwayatPasien(riwayatPasienHead);
     break;
+case 0:
+    simpanRiwayatPasienKeFile(riwayatPasienHead, "riwayatpasien2.csv");
+    return 0;
 */
