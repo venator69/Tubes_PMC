@@ -1,5 +1,3 @@
-#include "header.c"
-
 void tambahRiwayatPasien(RiwayatPasienNode** head) {
     RiwayatPasienNode* newNode = (RiwayatPasienNode*)malloc(sizeof(RiwayatPasienNode));
     printf("Masukkan nomor riwayat: ");
