@@ -3,124 +3,42 @@
 #include <string.h>
 #include <conio.h>
 
-#define MAX 100
-#define MAX_LINE 500
+#define MAX_LINE_LENGTH 100
+#define MAX 50
 
-// Definisikan struktur Riwayat untuk data riwayat
-typedef struct Riwayat
-{
+// Struktur untuk menyimpan data biaya tindakan
+typedef struct Biaya {
+    int no;
+    char aktivitas[MAX];
+    int biaya;
+    struct Biaya* next;
+} Biaya;
+
+// Struktur untuk menyimpan data pasien
+typedef struct Pasien {
+    int no;
+    char nama[MAX];
+    char alamat[MAX];
+    char kota[MAX];
+    char tempatLahir[MAX];
+    char tanggalLahir[MAX];
+    int umur;
+    char noBPJS[MAX];
+    char idPasien[MAX];
+    struct Pasien* next;
+} Pasien;
+
+// Struktur untuk menyimpan data riwayat pasien
+typedef struct Riwayat {
+    int no;
     char tanggal[MAX];
     char id_pasien[MAX];
     char diagnosis[MAX];
     char tindakan[MAX];
     char kontrol[MAX];
     int biaya;
-}Riwayat;
-
-// Definisikan struktur Biaya untuk data biaya
-typedef struct Biaya
-{
-    char aktivitas[MAX];
-    int biaya;
-}Biaya;
-
-// Definisikan struktur Pasien untuk data pasien
-typedef struct Pasien {
-    char nama_lengkap[MAX];
-    char alamat[MAX];
-    char kota[MAX];
-    char tempat_lahir[MAX];
-    char tanggal_lahir[MAX];
-    int umur;
-    char no_bpjs[MAX];
-    char id_pasien[MAX];
-    struct Pasien* next;
-} Pasien;
-
-// Fungsi untuk membuat node baru untuk pasien
-Pasien* createPasien(char* nama_lengkap, char* alamat, char* kota, char* tempat_lahir, char* tanggal_lahir, int umur, char* no_bpjs, char* id_pasien) {
-    Pasien* newPasien = (Pasien*)malloc(sizeof(Pasien));
-    strcpy(newPasien->nama_lengkap, nama_lengkap);
-    strcpy(newPasien->alamat, alamat);
-    strcpy(newPasien->kota, kota);
-    strcpy(newPasien->tempat_lahir, tempat_lahir);
-    strcpy(newPasien->tanggal_lahir, tanggal_lahir);
-    newPasien->umur = umur;
-    strcpy(newPasien->no_bpjs, no_bpjs);
-    strcpy(newPasien->id_pasien, id_pasien);
-    newPasien->next = NULL;
-    return newPasien;
-}
-
-// Fungsi untuk menyisipkan pasien baru ke dalam linked list
-void insertPasien(Pasien** head, Pasien* newPasien) {
-    if (*head == NULL) {
-        *head = newPasien;
-    } else {
-        Pasien* temp = *head;
-        while (temp->next != NULL) {
-            temp = temp->next;
-        }
-        temp->next = newPasien;
-    }
-}
-
-// Fungsi untuk membebaskan memori dari linked list
-void freeList(Pasien* head) {
-    Pasien* temp;
-    while (head != NULL) {
-        temp = head;
-        head = head->next;
-        free(temp);
-    }
-}
-
-void bacaDataPasien(FILE* file, Pasien** head) {
-    char line[MAX_LINE];
-
-    while (fgets(line, sizeof(line), file)) {
-        int no, umur;
-        char nama_lengkap[MAX], alamat[MAX], kota[MAX], tempat_lahir[MAX], tanggal_lahir[MAX], no_bpjs[MAX], id_pasien[MAX];
-
-        char* pos;
-        if ((pos = strchr(line, '\n')) != NULL) {
-            *pos = '\0';
-        }
-        if ((pos = strchr(line, '\r')) != NULL) {
-            *pos = '\0';
-        }
-
-        char* token = strtok(line, "\",\"");
-        no = atoi(token);
-
-        token = strtok(NULL, "\",\"");
-        strcpy(nama_lengkap, token);
-
-        token = strtok(NULL, "\",\"");
-        strcpy(alamat, token);
-
-        token = strtok(NULL, "\",\"");
-        strcpy(kota, token);
-
-        token = strtok(NULL, "\",\"");
-        strcpy(tempat_lahir, token);
-
-        token = strtok(NULL, "\",\"");
-        strcpy(tanggal_lahir, token);
-
-        token = strtok(NULL, "\",\"");
-        umur = atoi(token);
-
-        token = strtok(NULL, "\",\"");
-        strcpy(no_bpjs, token);
-
-        token = strtok(NULL, "\",\"\n");
-        strcpy(id_pasien, token);
-
-        Pasien* newPasien = createPasien(nama_lengkap, alamat, kota, tempat_lahir, tanggal_lahir, umur, no_bpjs, id_pasien);
-        insertPasien(head, newPasien);
-    }
-}
+    struct Riwayat* next;
+} Riwayat;
 
 // Fungsi untuk membaca file biaya tindakan dan mengisi linked list
 Biaya* bacaBiayaFile(const char* filename) {
@@ -155,6 +73,41 @@ Biaya* bacaBiayaFile(const char* filename) {
     return head;
 }
 
+// Fungsi untuk membaca file data pasien dan mengisi linked list
+Pasien* bacaPasienFile(const char* filename) {
+    FILE* file = fopen(filename, "r");
+    if (!file) {
+        perror("Gagal membuka file");
+        return NULL;
+    }
+
+    char line[MAX_LINE_LENGTH];
+    Pasien* head = NULL;
+    Pasien* current = NULL;
+
+    // Lewati header
+    fgets(line, MAX_LINE_LENGTH, file);
+
+    while (fgets(line, MAX_LINE_LENGTH, file)) {
+        Pasien* newNode = (Pasien*)malloc(sizeof(Pasien));
+        sscanf(line, "%d,\"%49[^\"]\",\"%99[^\"]\",\"%49[^\"]\",\"%49[^\"]\",\"%49[^\"]\",%d,\"%19[^\"]\",\"%19[^\"]",
+               &newNode->no, newNode->nama, newNode->alamat, newNode->kota, newNode->tempatLahir, newNode->tanggalLahir, &newNode->umur, newNode->noBPJS, newNode->idPasien);
+        // convertDateFormat(newNode->tanggalLahir);  // Konversi tanggal lahir
+        newNode->next = NULL;
+
+        if (head == NULL) {
+            head = newNode;
+            current = head;
+        } else {
+            current->next = newNode;
+            current = current->next;
+        }
+    }
+
+    fclose(file);
+    return head;
+}
+
 // Fungsi untuk membaca file riwayat pasien dan mengisi linked list
 Riwayat* bacaRiwayatPasienFile(const char* filename) {
     FILE* file = fopen(filename, "r");
@@ -173,7 +126,7 @@ Riwayat* bacaRiwayatPasienFile(const char* filename) {
     while (fgets(line, MAX_LINE_LENGTH, file)) {
         Riwayat* newNode = (Riwayat*)malloc(sizeof(Riwayat));
         sscanf(line, "%d,%49[^,],%19[^,],%49[^,],%49[^,],%49[^,],%d",
-               &newNode->no, newNode->tanggal, newNode->idPasien, newNode->diagnosis, newNode->tindakan, newNode->kontrol, &newNode->biaya);
+               &newNode->no, newNode->tanggal, newNode->id_pasien, newNode->diagnosis, newNode->tindakan, newNode->kontrol, &newNode->biaya);
         
         
         newNode->next = NULL;
@@ -190,4 +143,23 @@ Riwayat* bacaRiwayatPasienFile(const char* filename) {
     fclose(file);
     return head;
 }
+
+// // Fungsi untuk mencetak linked list biaya tindakan
+// void cetakBiaya(Biaya* head) {
+//     Biaya* current = head;
+//     while (current) {
+//         printf("No: %d, Aktivitas: %s, Biaya: %d\n", current->no, current->aktivitas, current->biaya);
+//         current = current->next;
+//     }
+// }
+
+// // Fungsi untuk mencetak linked list pasien
+// void cetakPasien(Pasien* head) {
+//     Pasien* current = head;
+//     while (current) {
+//         printf("No: %d, Nama: %s, Alamat: %s, Kota: %s, Tempat Lahir: %s, Tanggal Lahir: %s, Umur: %d, No BPJS: %s, ID Pasien: %s\n",
+//                current->no, current->nama, current->alamat, current->kota, current->tempatLahir, current->tanggalLahir, current->umur, current->noBPJS, current->idPasien);
+//         current = current->next;
+//     }
+// }
 
